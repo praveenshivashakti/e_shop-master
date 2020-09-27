@@ -1,4 +1,4 @@
-
+import 'dart:io';
 import 'package:e_shop/Widgets/customTextField.dart';
 import 'package:e_shop/DialogBox/errorDialog.dart';
 import 'package:e_shop/DialogBox/loadingDialog.dart';
@@ -10,7 +10,6 @@ import 'package:image_picker/image_picker.dart';
 import '../Store/storehome.dart';
 import 'package:e_shop/Config/config.dart';
 import 'package:e_shop/animation/FadeAnimation.dart';
-
 
 void main() =>
     runApp(MaterialApp(debugShowCheckedModeBanner: false, home: Register()));
@@ -32,8 +31,6 @@ class _RegisterState extends State<Register> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String userImageUrl = "";
   File _imageFile;
-
-  int r=0;
 
   @override
   Widget build(BuildContext context) {
@@ -146,12 +143,10 @@ class _RegisterState extends State<Register> {
                         Text(
                           "Register",
                           style: TextStyle(
-                          color: Color.fromARGB(255, 255, 0, 0),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 30),
+                              fontWeight: FontWeight.bold, fontSize: 30),
                         )),
                     SizedBox(
-                      height: 30,
+                      height: 20,
                     ),
                     FadeAnimation(
                         1.7,
@@ -159,15 +154,20 @@ class _RegisterState extends State<Register> {
                           key: _formKey,
                           child: Container(
                             decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.white,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Color.fromRGBO(r, g, b, .o),
-                                    blurRadius: 20,
-                                    offset: Offset(0, 10),
-                                  )
-                                ]),
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.purple[50],
+                                  blurRadius: 25.0, // soften the shadow
+                                  spreadRadius: 5.0, //extend the shadow
+                                  offset: Offset(
+                                    10.0, // Move to right 10  horizontally
+                                    1.0, // Move to bottom 10 Vertically
+                                  ),
+                                )
+                              ],
+                            ),
                             child: Column(
                               children: <Widget>[
                                 CustomTextField(
@@ -204,7 +204,6 @@ class _RegisterState extends State<Register> {
                           margin: EdgeInsets.symmetric(horizontal: 60),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(50),
-                            color: Color.fromRGBO(49, 39, 79, 1),
                           ),
                           child: Center(
                             child: MaterialButton(
@@ -231,8 +230,6 @@ class _RegisterState extends State<Register> {
                         Center(
                             child: Text(
                           "Create Account",
-                          style:
-                              TextStyle(color: Color.fromRGBO(49, 39, 79, .6)),
                         ))),
                   ],
                 ),
@@ -305,15 +302,18 @@ class _RegisterState extends State<Register> {
     )
         .then((auth) {
       firebaseUser = auth.user;
-    }).catchError((error) {
-      Navigator.pop(context);
-      showDialog(
+    }).catchError(
+      (error) {
+        Navigator.pop(context);
+        showDialog(
           context: context,
           builder: (c) {
             return ErrorAlertDialog(
               message: error.message.toString(),
             );
-          });
-    });
+          },
+        );
+      },
+    );
   }
 }

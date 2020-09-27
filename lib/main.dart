@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'Coding with Curry',
         theme: ThemeData(
+          dialogBackgroundColor: Colors.purple[100],
           primaryColor: Colors.white,
           //primarySwatch: Colors.black,
         ),
