@@ -7,6 +7,6 @@ Flutter Android & iOS eCommerce App This app is dealing with Online Water Supply
 *manage order
 *assign to Delivery Boys
 *Delivery Boys Login check todays orders send back to admin how many water cans sold 
-*much ore coming up.......
+*much More coming up.......
 
 Mail me at: praveendb009@gmail.com
