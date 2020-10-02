@@ -25,26 +25,25 @@ class _StoreHomeState extends State<StoreHome> {
     width = MediaQuery.of(context).size.width;
     return SafeArea(
       child: Scaffold(
-      ),
+          appBar: AppBar(
+              title: Text("CODESUNDAR"),
+              leading: Icon(Icons.menu),
+              backgroundColor: Colors.redAccent,
+              actions: <Widget>[
+            IconButton(icon: Icon(Icons.videocam), onPressed: () => {}),
+            IconButton(icon: Icon(Icons.account_circle), onPressed: () => {})
+          ])),
     );
   }
 }
-
-
 
 Widget sourceInfo(ItemModel model, BuildContext context,
     {Color background, removeCartFunction}) {
   return InkWell();
 }
 
-
-
 Widget card({Color primaryColor = Colors.redAccent, String imgPath}) {
   return Container();
 }
 
-
-
-void checkItemInCart(String productID, BuildContext context)
-{
-}
+void checkItemInCart(String productID, BuildContext context) {}

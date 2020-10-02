@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_shop/Widgets/customTextField.dart';
 import 'package:e_shop/DialogBox/errorDialog.dart';
 import 'package:e_shop/DialogBox/loadingDialog.dart';
@@ -7,12 +8,19 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../Store/storehome.dart';
 import 'package:e_shop/Config/config.dart';
 import 'package:e_shop/animation/FadeAnimation.dart';
 
-void main() =>
-    runApp(MaterialApp(debugShowCheckedModeBanner: false, home: Register()));
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  EcommerceApp.auth = FirebaseAuth.instance;
+  EcommerceApp.sharedPreferences = await SharedPreferences.getInstance();
+  EcommerceApp.firestore = Firestore.instance;
+
+  runApp(MaterialApp(debugShowCheckedModeBanner: false, home: Register()));
+}
 
 class Register extends StatefulWidget {
   @override
@@ -20,13 +28,13 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-  final TextEditingController _nameTextEditingcontroller =
+  final TextEditingController _nameTextEditingController =
       TextEditingController();
-  final TextEditingController _emailTextEditingcontroller =
+  final TextEditingController _emailTextEditingController =
       TextEditingController();
-  final TextEditingController _passwordTextEditingcontroller =
+  final TextEditingController _passwordTextEditingController =
       TextEditingController();
-  final TextEditingController _cPasswordTextEditingcontroller =
+  final TextEditingController _cPasswordTextEditingController =
       TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String userImageUrl = "";
@@ -171,22 +179,22 @@ class _RegisterState extends State<Register> {
                             child: Column(
                               children: <Widget>[
                                 CustomTextField(
-                                    controller: _nameTextEditingcontroller,
+                                    controller: _nameTextEditingController,
                                     data: Icons.person,
                                     hintText: "Name",
                                     isObsecure: false),
                                 CustomTextField(
-                                    controller: _emailTextEditingcontroller,
+                                    controller: _emailTextEditingController,
                                     data: Icons.person,
                                     hintText: "Email",
                                     isObsecure: false),
                                 CustomTextField(
-                                    controller: _passwordTextEditingcontroller,
+                                    controller: _passwordTextEditingController,
                                     data: Icons.person,
                                     hintText: "password",
                                     isObsecure: true),
                                 CustomTextField(
-                                    controller: _cPasswordTextEditingcontroller,
+                                    controller: _cPasswordTextEditingController,
                                     data: Icons.person,
                                     hintText: "Confirm password",
                                     isObsecure: true),
@@ -254,12 +262,12 @@ class _RegisterState extends State<Register> {
                 message: "please selecte profile image before continue");
           });
     } else {
-      _passwordTextEditingcontroller.text ==
-              _cPasswordTextEditingcontroller.text
-          ? _emailTextEditingcontroller.text.isNotEmpty &&
-                  _passwordTextEditingcontroller.text.isEmpty &&
-                  _cPasswordTextEditingcontroller.text.isNotEmpty &&
-                  _nameTextEditingcontroller.text.isNotEmpty
+      _passwordTextEditingController.text ==
+              _cPasswordTextEditingController.text
+          ? _emailTextEditingController.text.isNotEmpty &&
+                  _passwordTextEditingController.text.isNotEmpty &&
+                  _cPasswordTextEditingController.text.isNotEmpty &&
+                  _nameTextEditingController.text.isNotEmpty
               ? uploadToStorage()
               : displayDialog("please fill up the small form")
           : displayDialog("password do not match");
@@ -297,8 +305,8 @@ class _RegisterState extends State<Register> {
     FirebaseUser firebaseUser;
     await _auth
         .createUserWithEmailAndPassword(
-      email: _emailTextEditingcontroller.text.trim(),
-      password: _passwordTextEditingcontroller.text.trim(),
+      email: _emailTextEditingController.text.trim(),
+      password: _passwordTextEditingController.text.trim(),
     )
         .then((auth) {
       firebaseUser = auth.user;
@@ -315,5 +323,30 @@ class _RegisterState extends State<Register> {
         );
       },
     );
+    if (firebaseUser != null) {
+      saveUserInfoToFireStore(firebaseUser).then((value) {
+        Navigator.pop(context);
+        Route route = MaterialPageRoute(builder: (c) => StoreHome());
+        Navigator.pushReplacement(context, route);
+      });
+    }
+  }
+
+  Future saveUserInfoToFireStore(FirebaseUser fUser) async {
+    Firestore.instance.collection("users").document(fUser.uid).setData({
+      "uid": fUser.uid,
+      "email": fUser.email,
+      "name": _nameTextEditingController.text.trim(),
+      "url": userImageUrl,
+    });
+    await EcommerceApp.sharedPreferences.setString("uid", fUser.uid);
+    await EcommerceApp.sharedPreferences
+        .setString(EcommerceApp.userEmail, fUser.email);
+    await EcommerceApp.sharedPreferences
+        .setString(EcommerceApp.userName, _nameTextEditingController.text);
+    await EcommerceApp.sharedPreferences
+        .setString(EcommerceApp.userAvatarUrl, userImageUrl);
+    await EcommerceApp.sharedPreferences
+        .setStringList(EcommerceApp.userCartList, ["garbageValue"]);
   }
 }
