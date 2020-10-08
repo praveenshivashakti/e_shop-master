@@ -232,7 +232,7 @@ class _LoginState extends State<Login> {
           return LoadingAlertDialog(message: "Loading , Please Wait...");
         });
     FirebaseUser firebaseUser;
-    await _auth.signInWithEmailAndPassword(email: _emailTextEditingController.text.trim(), password: _passwordTextEditingController.text.trim(),)
+    await _auth.signInWithEmailAndPassword(email: _emailTextEditingController.text.trim(), password: _passwordTextEditingController.text.trim(),).then().catchError(onError)
 
 
 
