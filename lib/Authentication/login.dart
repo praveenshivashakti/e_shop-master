@@ -14,11 +14,26 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final TextEditingController _nameTextEditingController =
+      TextEditingController();
+  final TextEditingController _emailTextEditingController =
+      TextEditingController();
+  final TextEditingController _passwordTextEditingController =
+      TextEditingController();
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  String userImageUrl = "";
+
   @override
   Widget build(BuildContext context) {
-    double _screenWidth = MediaQuery.of(context).size.width;
-    final width = MediaQuery.of(context).size.width;
+    double _screenWidth = MediaQuery
+        .of(context)
+        .size
+        .width;
+    final width = MediaQuery
+        .of(context)
+        .size
+        .width;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -39,7 +54,7 @@ class _LoginState extends State<Login> {
                         Container(
                           decoration: BoxDecoration(
                               image: DecorationImage(
-                                  image: AssetImage('assets/login_cano.png'),
+                                  image: AssetImage('assets/canos.png'),
                                   fit: BoxFit.fill)),
                         ),
                       ),
@@ -53,7 +68,7 @@ class _LoginState extends State<Login> {
                             decoration: BoxDecoration(
                                 image: DecorationImage(
                                     image:
-                                        AssetImage('assets/background-2.png'),
+                                    AssetImage('assets/background-2.png'),
                                     fit: BoxFit.fill)),
                           )),
                     )
@@ -62,6 +77,11 @@ class _LoginState extends State<Login> {
               ),
               SizedBox(
                 height: 30,
+              ),
+              new Center(
+                child: new Container(
+                  color: Colors.orange,
+                ),
               ),
               Container(
                 child: Column(
@@ -142,9 +162,21 @@ class _LoginState extends State<Login> {
                               elevation: 0,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(50)),
-                              onPressed: () {},
+                              onPressed: () {
+                                _emailTextEditingController.text.isNotEmpty &&
+                                    _passwordTextEditingController
+                                        .text.isNotEmpty
+                                    ? loginUser()
+                                    : showDialog(
+                                    context: context,
+                                    builder: (c) {
+                                      return ErrorAlertDialog(
+                                          message:
+                                          "please write Email and Password!!!");
+                                    });
+                              },
                               child: Text(
-                                "Sign up",
+                                "Login",
                                 style: TextStyle(
                                     fontWeight: FontWeight.w600, fontSize: 18),
                               ),
@@ -155,18 +187,54 @@ class _LoginState extends State<Login> {
                       height: 30,
                     ),
                     FadeAnimation(
-                        2,
-                        Center(
+                      1.9,
+                      Container(
+                        height: 50,
+                        margin: EdgeInsets.symmetric(horizontal: 60),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        child: Center(
+                          child: MaterialButton(
+                            minWidth: double.infinity,
+                            height: 60,
+                            color: Colors.purple[200],
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50)),
+                            onPressed: () {
+                              Navigator.push(context, MaterialPageRoute(
+                                  builder: (context) => AdminSignInPage()));
+                            },
                             child: Text(
-                          "Create Account",
-                        ))),
+                              "Hi I'am Admin!",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600, fontSize: 18),
+                            ),
+                          ),
+                        ),
+                      ),),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),
       ),
     );
   }
+
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  void loginUser() async {
+    showDialog(
+        context: context,
+        builder: (c) {
+          return LoadingAlertDialog(message: "Loading , Please Wait...");
+        });
+    FirebaseUser firebaseUser;
+    await _auth.signInWithEmailAndPassword(email: _emailTextEditingController.text.trim(), password: _passwordTextEditingController.text.trim(),)
+
+
+
+
 }

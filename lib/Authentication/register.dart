@@ -29,21 +29,27 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   final TextEditingController _nameTextEditingController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _emailTextEditingController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _passwordTextEditingController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _cPasswordTextEditingController =
-      TextEditingController();
+  TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String userImageUrl = "";
   File _imageFile;
 
   @override
   Widget build(BuildContext context) {
-    double _screenWidth = MediaQuery.of(context).size.width;
-    final width = MediaQuery.of(context).size.width;
+    double _screenWidth = MediaQuery
+        .of(context)
+        .size
+        .width;
+    final width = MediaQuery
+        .of(context)
+        .size
+        .width;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -78,7 +84,7 @@ class _RegisterState extends State<Register> {
                             decoration: BoxDecoration(
                                 image: DecorationImage(
                                     image:
-                                        AssetImage('assets/background-2.png'),
+                                    AssetImage('assets/background-2.png'),
                                     fit: BoxFit.fill)),
                           )),
                     )
@@ -104,10 +110,10 @@ class _RegisterState extends State<Register> {
                                 : FileImage(_imageFile),
                             child: _imageFile == null
                                 ? Icon(
-                                    Icons.add_photo_alternate,
-                                    size: _screenWidth * 0.15,
-                                    color: Colors.grey,
-                                  )
+                              Icons.add_photo_alternate,
+                              size: _screenWidth * 0.15,
+                              color: Colors.grey,
+                            )
                                 : null,
                           )),
                     ),
@@ -126,13 +132,13 @@ class _RegisterState extends State<Register> {
                           radius: _screenWidth = 0.15,
                           backgroundColor: Colors.purple,
                           backgroundImage:
-                              _imageFile == null ? null : FileImage(_imageFile),
+                          _imageFile == null ? null : FileImage(_imageFile),
                           child: _imageFile == null
                               ? Icon(
-                                  Icons.add_photo_alternate,
-                                  size: _screenWidth * 0.15,
-                                  color: Colors.grey,
-                                )
+                            Icons.add_photo_alternate,
+                            size: _screenWidth * 0.15,
+                            color: Colors.grey,
+                          )
                               : null,
                         ))
                   ],
@@ -237,8 +243,8 @@ class _RegisterState extends State<Register> {
                         2,
                         Center(
                             child: Text(
-                          "Create Account",
-                        ))),
+                              "Create Account",
+                            ))),
                   ],
                 ),
               )
@@ -263,13 +269,13 @@ class _RegisterState extends State<Register> {
           });
     } else {
       _passwordTextEditingController.text ==
-              _cPasswordTextEditingController.text
+          _cPasswordTextEditingController.text
           ? _emailTextEditingController.text.isNotEmpty &&
-                  _passwordTextEditingController.text.isNotEmpty &&
-                  _cPasswordTextEditingController.text.isNotEmpty &&
-                  _nameTextEditingController.text.isNotEmpty
-              ? uploadToStorage()
-              : displayDialog("please fill up the small form")
+          _passwordTextEditingController.text.isNotEmpty &&
+          _cPasswordTextEditingController.text.isNotEmpty &&
+          _nameTextEditingController.text.isNotEmpty
+          ? uploadToStorage()
+          : displayDialog("please fill up the small form")
           : displayDialog("password do not match");
     }
   }
@@ -289,16 +295,23 @@ class _RegisterState extends State<Register> {
           return LoadingAlertDialog(
               message: "Authenticating Cano online Water supply");
         });
-    String imageFileName = DateTime.now().millisecondsSinceEpoch.toString();
+    String imageFileName = DateTime
+        .now()
+        .millisecondsSinceEpoch
+        .toString();
     StorageReference storageReference =
-        FirebaseStorage.instance.ref().child(imageFileName);
+    FirebaseStorage.instance.ref().child(imageFileName);
     StorageUploadTask storageUploadTask = storageReference.putFile(_imageFile);
     StorageTaskSnapshot taskSnapshot = await storageUploadTask.onComplete;
     await taskSnapshot.ref
         .getDownloadURL()
-        .then((urlImage) => userImageUrl = urlImage);
-    _registerUser();
+        .then((urlImage) {
+      userImageUrl = urlImage;
+      _registerUser();
+    });
   }
+
+
 
   FirebaseAuth _auth = FirebaseAuth.instance;
   void _registerUser() async {
@@ -311,7 +324,7 @@ class _RegisterState extends State<Register> {
         .then((auth) {
       firebaseUser = auth.user;
     }).catchError(
-      (error) {
+          (error) {
         Navigator.pop(context);
         showDialog(
           context: context,
@@ -323,6 +336,7 @@ class _RegisterState extends State<Register> {
         );
       },
     );
+
     if (firebaseUser != null) {
       saveUserInfoToFireStore(firebaseUser).then((value) {
         Navigator.pop(context);
